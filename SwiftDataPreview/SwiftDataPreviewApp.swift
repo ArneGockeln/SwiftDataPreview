@@ -10,23 +10,14 @@ import SwiftData
 
 @main
 struct SwiftDataPreviewApp: App {
-    var sharedModelContainer: ModelContainer = {
-        let schema = Schema([
-            Item.self,
-        ])
-        let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
-
-        do {
-            return try ModelContainer(for: schema, configurations: [modelConfiguration])
-        } catch {
-            fatalError("Could not create ModelContainer: \(error)")
-        }
-    }()
-
     var body: some Scene {
         WindowGroup {
             ContentView()
         }
-        .modelContainer(sharedModelContainer)
+        #if DEBUG /// Running in Debug mode in Xcode sets always to store in memory
+        .modelContainer(DataController.shared.sharedModelContainer(inMemory: true))
+        #else
+        .modelContainer(DataController.shared.sharedModelContainer())
+        #endif
     }
 }
